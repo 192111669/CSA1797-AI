@@ -1,0 +1,48 @@
+from collections import deque
+
+
+def water_jug(start, end, max1, max2):
+    queue = deque([(0, 0)])
+    visited = set([(0, 0)])
+    parent = {}
+
+    while queue:
+        current = queue.popleft()
+        jug1, jug2 = current
+
+        if jug1 == end or jug2 == end:
+            path = []
+            while current != (0, 0):
+                path.append(current)
+                current = parent[current]
+            path.append((0, 0))
+            path.reverse()
+            return path
+
+        operations = [
+            (max1, jug2),   
+            (jug1, max2),   
+            (0, jug2),  
+            (jug1, 0),  
+            (min(jug1 + jug2, max1), (jug1 + jug2) - min(jug1 + jug2, max1)), 
+            ((jug1 + jug2) - min(jug1 + jug2, max2), min(jug1 + jug2, max2))  
+        ]
+
+        for op in operations:
+            if op not in visited:
+                queue.append(op)
+                visited.add(op)
+                parent[op] = current
+
+    return "No solution found."
+jug1_capacity = 4
+jug2_capacity = 3
+desired_amount = 2
+
+solution = water_jug(0, desired_amount, jug1_capacity, jug2_capacity)
+if solution != "No solution found.":
+    print("Solution path:")
+    for step in solution:
+        print(step)
+else:
+    print("No solution exists for the given jug capacities and desired amount.")

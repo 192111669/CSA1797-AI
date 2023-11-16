@@ -1,35 +1,16 @@
-% Facts
-has_fever(john).
-has_cough(john).
-has_headache(john).
+:- discontiguous likes/2. 
 
-% Rules
-has_flu(X) :- has_fever(X), has_cough(X), has_headache(X).
+likes(john, pizza).
+likes(mary, pasta).
+likes(mike, burgers).
 
-% Forward chaining implementation
-forward_chaining :-
-    % Check for new facts using rules
-    (has_flu(X),
-     \+ has_flu(X)   % Check if the fact is not already known
-     -> 
-     assert(has_flu(X)),
-     write('Derived new fact: has_flu('), write(X), write(')'), nl,
-     fail  % Force backtracking to find more facts
-     ;
-     true).
+eats(X, Y) :- likes(X, Y).
 
-% Example queries
-:- dynamic has_flu/1.  % Dynamic predicate to allow assert/retract
+healthy(pasta).
+healthy(salad).
 
-% Run forward chaining
-:- initialization(forward_chaining).
+recommends(X, Y) :- eats(X, Y), healthy(Y).
 
-% Example queries after forward chaining
-% Query 1
-?- has_flu(john).
-% Output: Derived new fact: has_flu(john)
-% true.
+likes(X, Y) :- recommends(Z, Y), friend(X, Z).
 
-% Query 2
-?- has_flu(mary).
-% Output: false.
+friend(john, mary).
